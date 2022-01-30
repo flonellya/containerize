@@ -2,7 +2,30 @@ version: "3"
 services:
   app:
     container_name: containerize_app_1
-    # your code goes here ...
+    restart: unless-stopped
+    build:
+      context: ./app
+      dockerfile: Dockerfile-app
+    volumes: 
+          - ./ app:/usr/share/server 
+      ports: 
+      - "8000:8000"
   nginx:
     container_name: containerize_nginx_1
-    # your code goes here ...
+    image: nginx:latest
+    restart: unless-stopped
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-nginx
+    volumes: 
+          - nginxdata:/var/log/nginx
+    ports:
+        - 80:80
+        - 443:443
+    depens_on:
+        - flask
+    network:
+      frontend:
+        driver: bridge
+      backend:
+        driver: bridge
