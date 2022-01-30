@@ -4,28 +4,26 @@ services:
     container_name: containerize_app_1
     restart: unless-stopped
     build:
-      context: ./app
-      dockerfile: Dockerfile-app
-    volumes: 
-          - ./ app:/usr/share/server 
-      ports: 
-      - "8000:8000"
+     context: ./app
+     dockerfile: Dockerfile
+    ports:
+     - "8000:8000"
+    command: gunicorn -w 1 -b :8000 server:app
+
   nginx:
     container_name: containerize_nginx_1
-    image: nginx:latest
     restart: unless-stopped
     build:
-      context: ./nginx
-      dockerfile: Dockerfile-nginx
-    volumes: 
-          - nginxdata:/var/log/nginx
+     context:  ./nginx
+     dockerfile: Dockerfile
+    volumes:
+            - ssl_certificates:/nginx/files/
+
     ports:
-        - 80:80
-        - 443:443
-    depens_on:
-        - flask
-    network:
-      frontend:
-        driver: bridge
-      backend:
-        driver: bridge
+     - 80:80
+     - 443:443
+    depends_on:
+     - app
+volumes:
+  ssl_certificates:
+    driver: local
