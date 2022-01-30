@@ -1,8 +1,10 @@
-# pull official base image
-From python:3.8.0-alpine
+FROM python3.9.0-alpine
 
-#Work directory
-WORKDIR /usr/src/app
-
-#environmental variable
-
+#work directory
+RUN mkdir -p /home/app/server
+RUN apt update && apt install -y
+WORKDIR /home/app/server
+COPY src/requirements.txt /home/app/server
+RUN pip install --upgrade pip --user
+RUN python -m pip install -r requirements.txt
+COPY src /home/app/server
