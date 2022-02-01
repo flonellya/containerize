@@ -8,15 +8,17 @@ services:
      dockerfile: Dockerfile
     ports:
      - "8000:8000"
+    command: gunicorn -w 1 -b :8000 server:app
 
   nginx:
     container_name: containerize_nginx_1
+    image: nginx:lates
     restart: unless-stopped
     build:
      context:  ./nginx
      dockerfile: Dockerfile
     volumes:
-            - ssl_certificates:/nginx/files/
+            - ssl_certificates:/etc/ssl/
 
     ports:
      - 80:80
@@ -26,3 +28,4 @@ services:
 volumes:
   ssl_certificates:
     driver: local
+
